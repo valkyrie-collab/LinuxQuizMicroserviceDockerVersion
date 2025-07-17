@@ -1,0 +1,3 @@
+CREATE DATABASE quiz;
+CREATE DATABASE question;
+CREATE DATABASE authentication;

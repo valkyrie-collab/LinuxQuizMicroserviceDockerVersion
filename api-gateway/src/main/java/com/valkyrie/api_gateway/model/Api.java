@@ -14,21 +14,21 @@ public class Api {
     @Bean
     public RouterFunction<ServerResponse> routerFunction() {
         return route("question-post").POST("/question/**", http())
-                .before(uri("http://localhost:8081")).build().and(
+                .before(uri("http://question-service:8081")).build().and(
                         route("question-get").GET("/question/**", http())
-                                .before(uri("http://localhost:8081")).build()
+                                .before(uri("http://question-service:8081")).build()
                 ).and(
                         route("question-delete").DELETE("/question/**", http())
-                                .before(uri("http://localhost:8081")).build()
+                                .before(uri("http://question-service:8081")).build()
                 ).and(
                         route("quiz-post").POST("/quiz/**", http())
-                                .before(uri("http://localhost:8082")).build()
+                                .before(uri("http://quiz-service:8082")).build()
                 ).and(
                         route("quiz-get").GET("/quiz/**", http())
-                                .before(uri("http://localhost:8082")).build()
+                                .before(uri("http://quiz-service:8082")).build()
                 ).and(
                         route("user").POST("/user/**", http())
-                                .before(uri("http://localhost:8083")).build()
+                                .before(uri("http://authentication-service:8083")).build()
                 );
     }
 }
