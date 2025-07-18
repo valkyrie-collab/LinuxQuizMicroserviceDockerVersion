@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - quiz-service
+      - question-service
+      - authentication-service
+    environment:
+      SERVER_PORT: 8080
+      JWTS_SECURITY: zbH0xcge0pmmjFpXUc/SJ5sbzM97grziVDxqrWDB57g=
+    networks:
+      - my-network
+
+  authentication-service:
+    build: ./authentication-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres
+    environment:
+      SERVER_PORT: 8083
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/authentication
+      SPRING_DATASOURCE_USERNAME: valkyrie
+      SPRING_DATASOURCE_PASSWORD: 3008
+      JWTS_SECURITY: zbH0xcge0pmmjFpXUc/SJ5sbzM97grziVDxqrWDB57g=
+    networks:
+      - my-network
+
+  service-registry:
+    build: ./service-registry
+    ports:
+      - "8761:8761"
+    environment:
+      SERVER_PORT: 8761
+      HOSTNAME: service-registry
+    networks:
+      - my-network
+
+  question-service:
+    build: ./question-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    environment:
+      SERVER_PORT : 8081
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/question
+      SPRING_DATASOURCE_USERNAME: valkyrie
+      SPRING_DATASOURCE_PASSWORD: 3008
+    networks:
+      - my-network
+
+  quiz-service:
+    build: ./quiz-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+    environment:
+      SERVER_PORT: 8082
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quiz
+      SPRING_DATASOURCE_USERNAME: valkyrie
+      SPRING_DATASOURCE_PASSWORD: 3008
+    networks:
+      - my-network
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: valkyrie
+      POSTGRES_PASSWORD: 3008
+      POSTGRES_DB: valkyrieDB
+    ports:
+      - "5433:5432"
+    networks:
+      - my-network
+    volumes:
+      - postgres-store-data:/var/lib/postgresql/data
+      - ./Dbms/Dbms.sql:/docker-entrypoint-initdb.d/Dbms.sql
+
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  postgres-store-data:
